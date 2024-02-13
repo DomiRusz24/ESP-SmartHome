@@ -1,4 +1,4 @@
-#include "User.h"
+#include "User.hpp"
 
 User::~User() {
     this->getWebsocket()->setUserData(nullptr);
@@ -19,9 +19,9 @@ void User::sendEvent(ServerEvent event) {
         delete registered;
     } else if (event.type == server::Type::MESSAGE) {
         server::Message* message = (server::Message*) event.event;
-        String output = "MESSAGE FROM ";
+        String output = "MESSAGE ";
         output+= message->from;
-        output+= ": ";
+        output+= " ";
         output+= message->message;
         getWebsocket()->sendString(output);
         delete message;

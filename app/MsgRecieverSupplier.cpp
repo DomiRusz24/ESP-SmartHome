@@ -1,4 +1,4 @@
-#include "MsgRecieverSupplier.h"
+#include "MsgRecieverSupplier.hpp"
 
 void MsgRecieverSupplier::removeReciever(MsgReciever* reciever) {
     if (recievers.contains(reciever)) {

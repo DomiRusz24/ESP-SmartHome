@@ -1,4 +1,4 @@
-#include "UserGroup.h"
+#include "UserGroup.hpp"
 
 int UserGroup::getId() { return id; }
 String UserGroup::getName() { return name; }

@@ -3,7 +3,7 @@
 
 #include <SmingCore.h>
 
-#include "User.h"
+#include "User.hpp"
 
 class UserGroup : MsgReciever {
 private:

@@ -1,7 +1,7 @@
 #ifndef H_MSGSUPPLIER
 #define H_MSGSUPPLIER
 
-#include "UserGroup.h"
+#include "UserGroup.hpp"
 
 class MsgRecieverSupplier {
    private:

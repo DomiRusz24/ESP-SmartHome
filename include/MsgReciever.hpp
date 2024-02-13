@@ -1,8 +1,9 @@
 #ifndef H_MSGRECIEVER
 #define H_MSGRECIEVER
 
+
 #include <SmingCore.h>
-#include "MsgType.h"
+#include "MsgType.hpp"
 
 class MsgReciever {
 public:

@@ -3,8 +3,8 @@
 
 #include <SmingCore.h>
 
-#include "AppEvents.h"
-#include "MsgReciever.h"
+#include "AppEvents.hpp"
+#include "MsgReciever.hpp"
 
 enum UserState {
     UNKNOWN,

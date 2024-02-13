@@ -3,11 +3,11 @@
 
 HttpServer httpServer;
 
-#include "UserGroup.h"
-#include "MsgRecieverSupplier.h"
+#include "UserGroup.hpp"
+#include "MsgRecieverSupplier.hpp"
 
 // If you want, you can define WiFi settings globally in Eclipse Environment
-// Variables
+// Varia1bles
 #ifndef WIFI_SSID
 #define WIFI_SSID "Masterdev"  // Put your SSID and password here
 #define WIFI_PWD "cn2+cx@79"
@@ -19,8 +19,7 @@ void onIndex(HttpRequest &request, HttpResponse &response) {
     auto tmpl = new TemplateFileStream(F("index.html"));
     // auto& vars = tmpl->variables();
     // vars["counter"] = String(counter);
-    response.sendNamedStream(
-        tmpl);  // this template object will be deleted automatically
+    response.sendNamedStream(tmpl);
 }
 
 MsgRecieverSupplier supplier;
@@ -146,7 +145,10 @@ void onCreateGroup(HttpRequest &request, HttpResponse &response) {
 
     //group->addUser((User*) reciever);
 
-    //response.sendString("" + group->getId());
+    //String s = "";
+    //s+= group->getId();
+
+    //response.sendString(s);
 }
 
 
