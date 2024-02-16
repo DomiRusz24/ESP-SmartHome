@@ -1,4 +1,6 @@
 out/**
+.cache/
 .cache/**
 compile_commands
+.vscode/
 .vscode/**
