@@ -28,8 +28,8 @@ There is also a websocket server that dynamically sends status updates, which he
 
 ### Images
 
-![Image 1](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/1.webm?raw=true "Image 1")
-![Image 2](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/2.webm?raw=true "Image 2")
-![Image 3](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/3.webm?raw=true "Image 3")
+![Image 1](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/1.png?raw=true "Image 1")
+![Image 2](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/2.png?raw=true "Image 2")
+![Image 3](https://github.com/DomiRusz24/ESP-SmartHome/blob/main/img/3.png?raw=true "Image 3")
 
 
