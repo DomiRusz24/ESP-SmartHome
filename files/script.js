@@ -1,157 +1,87 @@
 /*
-    httpServer.paths.set("/user", onUser);
-    httpServer.paths.set("/allusers", onAllUser);
-    httpServer.paths.set("/allusersfor", onUserSpecific);
-    httpServer.paths.set("/type", onType);
-    httpServer.paths.set("/creategroup", onCreateGroup);
+    This file is part of ESPSmartHome.
+
+    ESPSmartHome is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+    ESPSmartHome is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along with Foobar. If not, see <https://www.gnu.org/licenses/>. 
 */
 
-class User {
-    constructor(id) {
-        this.id = id;
-        this.name = "UNKNOWN";
-    }
-
-
-    updateUsername() {
-        var self = this;
-        fetch(`http://${window.location.hostname}/user?id=` + this.id).then(function(response) {
-            return response.text();
-        }).then(function(data) {
-            self.name = name;
-        });
-    }
-}
 
 let socket;
 
 
+let state = [false, false, false, false];
+let locked = [false, false, false, false];
+
+function updateButton(id) {
+    if (state[id]) {
+        document.getElementById(`button${id}`).classList.add(`on`);
+    } else {
+        document.getElementById(`button${id}`).classList.remove(`on`);
+    }
+
+    if (locked[id]) {
+        document.getElementById(`button${id}`).children[0].classList.add(`locked`);
+    } else {
+        document.getElementById(`button${id}`).children[0].classList.remove(`locked`);
+    }
+}
+
 class Socket {
 
     constructor() {
-        this.id = -1;
-        this.name = "UNKNOWN";
-        this.online = [];
-
         this.websocket = new WebSocket(`ws://${window.location.hostname}/ws`);
 
         var self = this;
 
-        this.websocket.onopen = () => self.onOpen;
-        this.websocket.onclose = () => self.onClose;
-        this.websocket.onmessage = () => self.onMessage;
-        this.websocket.onerror = () => self.onError;
+        this.websocket.onopen = (evt) => self.onOpen(evt);
+        this.websocket.onclose = (evt) => self.onClose(evt);
+        this.websocket.onmessage = (evt) => self.onMessage(evt);
+        this.websocket.onerror = (evt) => self.onError(evt);
     }
 
     onOpen(evt) {}
 
     onClose(evt) {}
 
-    onMessage(evt) {
-        let split = evt.data.split(" ", 2);
-        if (split.size() != 2) return;
-        onEvent(split[0].toUpperCase(), split[1]);
-    }
-
-    onError(evt) {}
-
 
     onEvent(name, args) {
         switch (name) {
-            case "OK":
-                this.onOk();
+            case "ON":
+                state[parseInt(args)] = true;
+                updateButton(parseInt(args));
                 break;
-            case "ERROR":
-                this.onError();
+            case "OFF":
+                state[parseInt(args)] = false;
+                updateButton(parseInt(args));
                 break;
-            case "REGISTER":
-                this.onRegister(toNumber(args));
+            case "LOCK":
+                locked[parseInt(args)] = true;
+                updateButton(parseInt(args));
                 break;
-            case "MESSAGE":
-                let split = args.split(" ", 2);
-                if (split.size() != 2) return;
-                this.onMessage(toNumber(split[0]), split[1]);
-                break;
-            case "KICK":
-                this.onKick(toNumber(args));
-                break;
-            case "JOIN":
-                this.onJoin(toNumber(args));
-                break;
-            case "LEAVE":
-                this.onLeave(toNumber(args));
+            case "UNLOCK":
+                locked[parseInt(args)] = false;
+                updateButton(parseInt(args));
                 break;
         }
     }
+
+    onMessage(evt) {
+        console.log(evt.data);
+        let split = evt.data.split(" ", 2);
+        this.onEvent(split[0].toUpperCase(), split[1]);
+    }
+
+    onError(evt) {}
 
     onOk() {
 
     }
 
-    onError() {
-
-    }
-
-    onRegister(id) {
-        this.id = id;
-    }
-
-
-    getUserName(id) {
-        for (let user of this.online) {
-            if (user.id == id) return user.name;
-        }
-
-        return "UNKNOWN";
-    }
-
-    onMessage(from, message) {
-        let name = this.getUserName(from);
-        console.log(name + ": " + message);
-    }
-
-    onKick(who) {
-
-    }
-
-    onJoin(who) {
-        getOnlineUsers();
-    }
-
-    onLeave(who) {
-        getOnlineUsers();
-    }
-
-
-    sendMessage(to, message) {
-        this.send("SEND " + to + " " + message);
-    }
-
-    kick(who) {
-        this.send("KICK " + who);
-    }
-
-    register(name) {
-        this.send("REGISTER " + name);
-        this.name = name;
-    }
-
     send(message) {
         this.websocket.send(message);
-    }
-
-    getOnlineUsers() {
-        var self = this;
-        fetch(`http://${window.location.hostname}/allusersfor?id=` + this.id).then(function(response) {
-            return response.text();
-        }).then(function(data) {
-            self.online = [];
-            for (let userId of data.split(" ")) {
-                let user = new User(Number(userId));
-                user.updateUsername();
-                self.online.push(user);
-            }
-        });
     }
 
     disconnect() {
@@ -160,8 +90,57 @@ class Socket {
 }
 
 function init() {
-    console.log("sdfsdf");
     socket = new Socket();
+
+    for (let i = 0; i < 4; i++) {
+        updateState(i);
+    }
+}
+
+
+
+function updateState(id) {
+    fetch(`http://${window.location.hostname}/state?pin=${id}`).then((s) => {
+        return s.text()
+    })
+    .then((s) => {
+        if (s[0] == "1") {
+            state[id] = true;
+        } else {
+            state[id] = false;
+        }
+
+        if (s[1] == "1") {
+            locked[id] = true;
+        } else {
+            locked[id] = false;
+        }
+
+        updateButton(id);
+
+    });
+}
+
+function pinClick(id) {
+    fetch(`http://${window.location.hostname}/toggle?pin=${id}`).then((s) => {
+        return s.text()
+    })
+    .then((s) => {
+        if (s[0] == "1") {
+            state[id] = true;
+        } else {
+            state[id] = false;
+        }
+
+        if (s[1] == "1") {
+            locked[id] = true;
+        } else {
+            locked[id] = false;
+        }
+
+
+        updateButton(id);
+    });
 }
 
 window.addEventListener("load", init, false);
